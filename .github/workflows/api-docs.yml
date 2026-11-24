@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
   build-and-publish-api-docs:
@@ -64,11 +65,13 @@ jobs:
           JWT_ACCESS_SECRET: docs-generation-placeholder-access-secret-32chars
           JWT_REFRESH_SECRET: docs-generation-placeholder-refresh-secret-32chars
           JWT_SECRET: docs-generation-placeholder-jwt-secret-32chars
+          STELLAR_WEBHOOK_SECRET: docs-generation-placeholder-webhook-secret
 
       - name: Render static API docs
         run: npm run docs:render
 
       - name: Publish API docs to GitHub Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
